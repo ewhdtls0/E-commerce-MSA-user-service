@@ -1,0 +1,15 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: user-service
+
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance-id:${random.value}} # 랜덤 포트여도 hostname:0이 아닌 유레카에서 hostname:${random.value}처럼 n개의 인스턴스 리스트로 인식하도록 id 부여
+  client:
+    register-with-eureka: true # 유레카에 등록할건지?
+    fetch-registry: true # 유레카로부터 인스턴스들의 정보를 주기적으로 받을지?
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka # 해당 위치에 마이크로서비스 애플리케이션 등록
