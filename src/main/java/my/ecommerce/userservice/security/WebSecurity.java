@@ -17,7 +17,7 @@ public class WebSecurity {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((authz) -> authz
-                                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/**")).permitAll()
                 );
         http.headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
 

@@ -18,7 +18,7 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance-id:${random.value}} # 랜덤 포트여도 hostname:0이 아닌 유레카에서 hostname:${random.value}처럼 n개의 인스턴스 리스트로 인식하도록 id 부여
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.instance-id:${random.value}} # 랜덤 포트여도 hostname:0이 아닌 유레카에서 hostname:${random.value}처럼 n개의 인스턴스 리스트로 인식하도록 id 부여
   client:
     register-with-eureka: true # 유레카에 등록할건지?
     fetch-registry: true # 유레카로부터 인스턴스들의 정보를 주기적으로 받을지?
