@@ -1,6 +1,8 @@
 package my.ecommerce.userservice.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.ecommerce.userservice.client.OrderServiceClient;
 import my.ecommerce.userservice.dto.UserDto;
 import my.ecommerce.userservice.jpa.UserEntity;
@@ -8,22 +10,18 @@ import my.ecommerce.userservice.jpa.UserRepository;
 import my.ecommerce.userservice.vo.ResponseOrder;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
@@ -60,7 +58,12 @@ public class UserServiceImpl implements UserService{
 //                new ParameterizedTypeReference<List<ResponseOrder>>() {
 //        });
 //        List<ResponseOrder> orders = orderListResponse.getBody();
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        List<ResponseOrder> orders = null;
+        try {
+            orders = orderServiceClient.getOrders(userId);
+        } catch (FeignException ex) {
+            log.error(ex.getMessage());
+        }
         userDto.setOrders(orders);
 
         return userDto;
