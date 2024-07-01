@@ -1,6 +1,7 @@
 package my.ecommerce.userservice.service;
 
 import lombok.RequiredArgsConstructor;
+import my.ecommerce.userservice.client.OrderServiceClient;
 import my.ecommerce.userservice.dto.UserDto;
 import my.ecommerce.userservice.jpa.UserEntity;
 import my.ecommerce.userservice.jpa.UserRepository;
@@ -29,7 +30,8 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
-    private final RestTemplate restTemplate;
+    private final OrderServiceClient orderServiceClient;
+//    private final RestTemplate restTemplate;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -53,11 +55,12 @@ public class UserServiceImpl implements UserService{
         UserDto userDto = new ModelMapper().map(userEntity, UserDto.class);
 
 //        List<ResponseOrder> orders = new ArrayList<>();
-        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
-        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
-                new ParameterizedTypeReference<List<ResponseOrder>>() {
-        });
-        List<ResponseOrder> orders = orderListResponse.getBody();
+//        String orderUrl = String.format(env.getProperty("order_service.url"), userId);
+//        ResponseEntity<List<ResponseOrder>> orderListResponse = restTemplate.exchange(orderUrl, HttpMethod.GET, null,
+//                new ParameterizedTypeReference<List<ResponseOrder>>() {
+//        });
+//        List<ResponseOrder> orders = orderListResponse.getBody();
+        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
         userDto.setOrders(orders);
 
         return userDto;

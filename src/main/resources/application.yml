@@ -32,7 +32,7 @@ greeting:
 
 logging:
   level:
-    my.ecommerce.userservice: DEBUG
+    my.ecommerce.userservice.client: DEBUG
 
 
 #token:
