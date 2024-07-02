@@ -10,6 +10,8 @@ import my.ecommerce.userservice.jpa.UserRepository;
 import my.ecommerce.userservice.vo.ResponseOrder;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService{
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
     private final OrderServiceClient orderServiceClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 //    private final RestTemplate restTemplate;
 
     @Override
@@ -64,7 +67,11 @@ public class UserServiceImpl implements UserService{
 //        } catch (FeignException ex) {
 //            log.error(ex.getMessage());
 //        }
-        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+//        List<ResponseOrder> orders = orderServiceClient.getOrders(userId);
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<ResponseOrder> orders = circuitbreaker.run(() -> orderServiceClient.getOrders(userId), throwable ->
+                new ArrayList<>()
+        );
         userDto.setOrders(orders);
 
         return userDto;
